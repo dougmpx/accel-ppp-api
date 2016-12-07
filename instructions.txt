@@ -1,0 +1,9 @@
+Server: http://YOURSERVER:5000/
+token: e32f0676ed7aa10cc827fa243bad5bcf11416e454abcaf2eaa4813bc34d37470
+
+Example: http://YOURSERVER:5000/api/v1/clients?token=e32f0676ed7aa10cc827fa243bad5bcf11416e454abcaf2eaa4813bc34d37470
+
+/api/v1/clients -----> show all connections
+/api/v1/clients/login/<string:login> -----> search for an connection based on login
+/api/v1/client/rates/<string:ifname> -----> show rx/tx in Mbits per second based on a ifname passed
+/api/v1/logs -----> show last 20 lines of logs (accel-ppp.log)
