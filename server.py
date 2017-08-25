@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Flask, request, abort
 from flask_json import FlaskJSON, JsonError, json_response, as_json
 import subprocess
@@ -6,6 +6,8 @@ import string
 from functools import wraps
 import time
 import re
+from flask import make_response, request, current_app
+from functools import update_wrapper
 
 app = Flask(__name__)
 FlaskJSON(app)
@@ -22,8 +24,50 @@ def token_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=21600, attach_to_all=True,
+                automatic_options=True):
+    if methods is not None:
+        methods = ', '.join(sorted(x.upper() for x in methods))
+    if headers is not None and not isinstance(headers, basestring):
+        headers = ', '.join(x.upper() for x in headers)
+    if not isinstance(origin, basestring):
+        origin = ', '.join(origin)
+    if isinstance(max_age, timedelta):
+        max_age = max_age.total_seconds()
+
+    def get_methods():
+        if methods is not None:
+            return methods
+
+        options_resp = current_app.make_default_options_response()
+        return options_resp.headers['allow']
+
+    def decorator(f):
+        def wrapped_function(*args, **kwargs):
+            if automatic_options and request.method == 'OPTIONS':
+                resp = current_app.make_default_options_response()
+            else:
+                resp = make_response(f(*args, **kwargs))
+            if not attach_to_all and request.method != 'OPTIONS':
+                return resp
+
+            h = resp.headers
+
+            h['Access-Control-Allow-Origin'] = origin
+            h['Access-Control-Allow-Methods'] = get_methods()
+            h['Access-Control-Max-Age'] = str(max_age)
+            if headers is not None:
+                h['Access-Control-Allow-Headers'] = headers
+            return resp
+
+        f.provide_automatic_options = False
+        return update_wrapper(wrapped_function, f)
+    return decorator
+
 @app.route('/api/v1/clients', methods=['GET'])
 @token_required
+@crossdomain(origin='*')
 def clients_get_all():
     p = subprocess.Popen(["accel-cmd", "show sessions"], stdout=subprocess.PIPE)
     output, err = p.communicate()
@@ -57,6 +101,7 @@ def clients_get_all():
 
 @app.route('/api/v1/clients/login/<string:login>', methods=['GET'])
 @token_required
+@crossdomain(origin='*')
 def get_client_login(login):
     p = subprocess.Popen(["accel-cmd", "show sessions", "match", "username", login], stdout=subprocess.PIPE)
     output, err = p.communicate()
@@ -91,6 +136,7 @@ def get_client_login(login):
 
 @app.route('/api/v1/client/rates/<string:ifname>', methods=['GET'])
 @token_required
+@crossdomain(origin='*')
 def client_get_rates(ifname):
     try:
         # LAST RX BYTES
@@ -126,6 +172,7 @@ def client_get_rates(ifname):
 
 @app.route('/api/v1/logs', methods=['GET'])
 @token_required
+@crossdomain(origin='*')
 def get_logs():
     rs = []
     try:
