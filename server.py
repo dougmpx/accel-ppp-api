@@ -69,7 +69,7 @@ def crossdomain(origin=None, methods=None, headers=None,
 @token_required
 @crossdomain(origin='*')
 def clients_get_all():
-    p = subprocess.Popen(["accel-cmd", "show sessions"], stdout=subprocess.PIPE)
+    p = subprocess.Popen(["accel-cmd", "show sessions", "order uptime"], stdout=subprocess.PIPE)
     output, err = p.communicate()
     clients = output.split('\n')
     del clients[0]
