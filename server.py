@@ -176,7 +176,7 @@ def client_get_rates(ifname):
 def get_logs():
     rs = []
     try:
-	p = subprocess.Popen(["tail", "-n", "20", "/var/log/accel-ppp/accel-ppp.log"], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["tail", "-n", "20", "/var/log/accel-ppp/accel-ppp.log"], stdout=subprocess.PIPE)
     	output, err = p.communicate()
         ansi_escape = re.compile(r'\x1b[^m]*m')
         output = ansi_escape.sub('', output)
@@ -188,6 +188,14 @@ def get_logs():
         return json_response(data=rs)
     except:
         return json_response(data=[], error={'Error to get value of log file'})
+
+@app.route('/api/v1/client/disconnect/<string:login>', methods=['GET'])
+@token_required
+@crossdomain(origin='*')
+def client_disconnect(login):
+    p = subprocess.Popen(["accel-cmd", "terminate", "username", login], stdout=subprocess.PIPE)
+    output, err = p.communicate()
+    return json_response(data=[], message={'Cliente desconectado com sucesso!'})
 
 if __name__ == '__main__':
     app.run()
