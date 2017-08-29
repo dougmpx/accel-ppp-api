@@ -74,11 +74,11 @@ def clients_get_all():
     clients = output.split('\n')
     del clients[0]
     del clients[0]
+    del clients[-1]
     response = []
     for line in clients:
         line = line.translate(None, string.whitespace)
         line = line.split('|')
-        #print line
         data_dict = {}
         response.append(data_dict)
         for index,item in enumerate(line):
@@ -86,12 +86,12 @@ def clients_get_all():
             if index == 0:
                 data_dict['ifname'] = item
             if index == 1:
-                data_dict['login'] = item
+		data_dict['login'] = item
             if index == 2:
                 data_dict['mac'] = item
             if index == 3:
                 data_dict['ip'] = item
-            if index == 4:
+	    if index == 4:
                 data_dict['rates'] = item
             if index == 7:
                 data_dict['state'] = item
@@ -114,6 +114,7 @@ def get_client_login(login):
         #print line
         line = line.translate(None, string.whitespace)
         line = line.split('|')
+        print line
         data_dict = {}
         response.append(data_dict)
     	for index,item in enumerate(line):
@@ -198,4 +199,4 @@ def client_disconnect(login):
     return json_response(data=[], message={'Cliente desconectado com sucesso!'})
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='10.20.1.80', port=5000)
