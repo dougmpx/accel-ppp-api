@@ -161,8 +161,8 @@ def client_get_rates(ifname):
         tx = current_tx - last_tx
         rx = current_rx - last_rx
     
-        tx = ((tx /2 / 1024 / 1024) * 8)
-        rx = ((rx /2 /1024 / 1024) * 8)
+        tx = ((tx /2 / 1024) * 8)
+        rx = ((rx /2 /1024) * 8)
     
         rates = {}
         rates['tx'] = tx
