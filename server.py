@@ -163,10 +163,13 @@ def client_get_rates(ifname):
     
         tx = ((tx / 1024) * 8)
         rx = ((rx / 1024) * 8)
+
+        ts = datetime.now().strftime('%H:%M:%S')
     
         rates = {}
         rates['tx'] = tx
         rates['rx'] = rx
+        rates['time'] = ts
     except:
         return json_response(data=[], error={'Error to get values of interface'})
     return json_response(data=rates)
