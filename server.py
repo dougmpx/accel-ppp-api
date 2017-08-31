@@ -164,6 +164,12 @@ def client_get_rates(ifname):
         tx = ((tx / 1024) * 8)
         rx = ((rx / 1024) * 8)
 
+	tx = format(tx, '.2f')
+	rx = format(rx, '.2f')
+
+	tx = float(tx)
+	rx = float(rx)
+
         #ts = ts = int(time.time())
 	ts = datetime.now().strftime('%H:%M:%S')
     
