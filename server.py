@@ -161,8 +161,8 @@ def client_get_rates(ifname):
         tx = current_tx - last_tx
         rx = current_rx - last_rx
     
-        tx = ((tx / 1024) * 8)
-        rx = ((rx / 1024) * 8)
+        tx = (((tx / 1024) * 8) /2 )
+        rx = (((rx / 1024) * 8) /2 )
 
 	tx = format(tx, '.2f')
 	rx = format(rx, '.2f')
