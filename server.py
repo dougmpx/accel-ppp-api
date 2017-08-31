@@ -164,8 +164,8 @@ def client_get_rates(ifname):
         tx = ((tx / 1024) * 8)
         rx = ((rx / 1024) * 8)
 
-        ts = ts = int(time.time())
-	#ts = datetime.now().strftime('%H:%M:%S')
+        #ts = ts = int(time.time())
+	ts = datetime.now().strftime('%H:%M:%S')
     
         rates = {}
         rates['tx'] = tx
